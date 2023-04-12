@@ -13,9 +13,6 @@ import (
 	"symeo/cli/packages/values"
 	"syscall"
 )
-import jsoniter "github.com/json-iterator/go"
-
-var extraJson = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var startCmd = &cobra.Command{
 	Use:   "start [any symeo run command flags] -- [your application start command]",
@@ -61,17 +58,10 @@ var startCmd = &cobra.Command{
 
 		var initializedValues = values.InitializeValues(contract, rawValues)
 
-		var env []string
+		systemEnv := utils.GetSystemEnv()
+		env := values.ValuesToEnv(initializedValues)
 
-		initializedValuesJson, err := extraJson.Marshal(initializedValues)
-		rawValuesJson, err := extraJson.Marshal(rawValues)
-
-		fmt.Println("rawValues", rawValues)
-		fmt.Println("rawValuesJson", string(rawValuesJson))
-		fmt.Println("initializedValues", initializedValues)
-		fmt.Println("initializedValuesJson", string(initializedValuesJson), err)
-
-		err = executeSingleCommandWithEnvs(args, len(env), env)
+		err = executeSingleCommandWithEnvs(args, len(env), append(systemEnv, env...))
 		if err != nil {
 			utils.HandleError(err, "Unable to execute your single command")
 		}

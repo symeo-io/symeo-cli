@@ -7,8 +7,12 @@ func AnyToValues(el any) Values {
 		return values
 	}
 
-	for propertyName, contractProperty := range el.(map[any]any) {
-		values[propertyName.(string)] = contractProperty
+	if castValues, ok := el.(Values); ok {
+		return castValues
+	}
+
+	for propertyName, valuesProperty := range el.(map[any]any) {
+		values[propertyName.(string)] = valuesProperty
 	}
 
 	return values
