@@ -56,7 +56,12 @@ var startCmd = &cobra.Command{
 			utils.HandleError(err)
 		}
 
-		var initializedValues = values.InitializeValues(contract, rawValues)
+		initializedValues := values.InitializeValues(contract, rawValues)
+		valuesErrors := values.CheckContractCompatibility(contract, initializedValues)
+
+		if len(valuesErrors) > 0 {
+			utils.HandleValidationErrors(valuesErrors...)
+		}
 
 		systemEnv := utils.GetSystemEnv()
 		env := values.ValuesToEnv(initializedValues)

@@ -28,3 +28,17 @@ func PrintErrorAndExit(exitCode int, err error, messages ...string) {
 func printError(e error) {
 	color.New(color.FgRed).Fprintf(os.Stderr, "Hmm, we ran into an error: %v", e)
 }
+
+func HandleValidationErrors(errors ...string) {
+	if len(errors) > 0 {
+		for _, message := range errors {
+			printValidationError(message)
+		}
+	}
+
+	os.Exit(1)
+}
+
+func printValidationError(message string) {
+	color.New(color.FgRed).Fprintln(os.Stderr, message)
+}
