@@ -2,7 +2,7 @@ package values
 
 import (
 	"github.com/go-faker/faker/v4"
-	"reflect"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -62,7 +62,5 @@ func TestInitializeValues(t *testing.T) {
 
 	initializedValues := InitializeValues(contract, values)
 
-	if !reflect.DeepEqual(initializedValues, expectedValues) {
-		t.Errorf("got %q, wanted %q", initializedValues, expectedValues)
-	}
+	assert.Equal(t, initializedValues, expectedValues)
 }
