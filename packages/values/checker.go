@@ -49,9 +49,9 @@ func contractPropertyAndValueHaveSameType(contractProperty map[string]any, value
 	case "boolean":
 		return reflect.TypeOf(value).Kind() == reflect.Bool
 	case "integer":
-		return reflect.TypeOf(value).Kind() == reflect.Int
+		return isInteger(value)
 	case "float":
-		return reflect.TypeOf(value).Kind() == reflect.Float32 || reflect.TypeOf(value).Kind() == reflect.Float64
+		return reflect.TypeOf(value).Kind() == reflect.Int || reflect.TypeOf(value).Kind() == reflect.Float32 || reflect.TypeOf(value).Kind() == reflect.Float64
 	}
 
 	return false
@@ -66,7 +66,7 @@ func buildMissingPropertyError(propertyName string, parentPath string) string {
 func buildWrongTypeError(propertyName string, parentPath string, contractProperty map[string]any, value any) string {
 	displayedPropertyName := buildParentPath(propertyName, parentPath)
 
-	return fmt.Sprintf("Configuration property \"%s\" has type \"%s\" while configuration contract defined \"%s\" as \"%s\".", displayedPropertyName, displayValueType(value), displayedPropertyName, contractProperty["type"])
+	return fmt.Sprintf("The property \"%s\" has type \"%s\" while configuration contract defined \"%s\" as \"%s\".", displayedPropertyName, displayValueType(value), displayedPropertyName, contractProperty["type"])
 }
 
 func buildParentPath(propertyName string, parentPath string) string {
@@ -97,8 +97,26 @@ func displayValueType(value any) string {
 		return "integer"
 	case reflect.Float32:
 	case reflect.Float64:
+		if isInteger(value) {
+			return "integer"
+		}
 		return "float"
 	}
 
 	return valueType.String()
+}
+
+func isInteger(value any) bool {
+	valueType := reflect.TypeOf(value).Kind()
+
+	if valueType == reflect.Int {
+		return true
+	}
+
+	if valueType == reflect.Float32 || valueType == reflect.Float64 {
+		floatValue := value.(float64)
+		return floatValue == float64(int(floatValue))
+	}
+
+	return false
 }

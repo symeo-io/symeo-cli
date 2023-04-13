@@ -34,8 +34,8 @@ func TestInitializeValues(t *testing.T) {
 	}
 
 	host := faker.URL()
-	responseLimit, _ := faker.RandomInt(0)
-	paginationLength, _ := faker.RandomInt(0)
+	responseLimit := 100
+	paginationLength := 100
 	values := map[string]any{
 		"database": map[string]any{
 			"host":          host,
@@ -62,5 +62,5 @@ func TestInitializeValues(t *testing.T) {
 
 	initializedValues := InitializeValues(contract, values)
 
-	assert.Equal(t, initializedValues, expectedValues)
+	assert.Equal(t, expectedValues, initializedValues)
 }

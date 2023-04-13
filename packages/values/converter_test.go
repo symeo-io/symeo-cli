@@ -9,8 +9,8 @@ import (
 
 func TestValuesToEnv(t *testing.T) {
 	host := faker.URL()
-	responseLimit, _ := faker.RandomInt(0)
-	paginationLength, _ := faker.RandomInt(0)
+	responseLimit := 100
+	paginationLength := 100
 	values := map[string]any{
 		"database": map[string]any{
 			"host":          host,
@@ -27,7 +27,7 @@ func TestValuesToEnv(t *testing.T) {
 
 	env := ValuesToEnv(values)
 
-	assert.Equal(t, len(env), 3)
+	assert.Equal(t, 3, len(env))
 	assert.Contains(t, env, fmt.Sprintf("DATABASE_HOST=%s", host))
 	assert.Contains(t, env, fmt.Sprintf("DATABASE_RESPONSE_LIMIT=%d", responseLimit))
 	assert.Contains(t, env, fmt.Sprintf("VCS_PROVIDER_PAGINATION_LENGTH=%d", paginationLength))
