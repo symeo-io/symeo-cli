@@ -4,16 +4,24 @@ import (
 	"reflect"
 )
 
-func IsContractProperty(el Contract) bool {
+func IsContractProperty(el map[string]any) bool {
 	return el["type"] != nil && reflect.TypeOf(el["type"]).Kind() == reflect.String
 }
 
-func IsContractPropertyOptional(el Contract) bool {
+func IsContractPropertyOptional(el map[string]any) bool {
 	return el["optional"] != nil && el["optional"] == true
 }
 
-func AnyToContract(el any) Contract {
-	contract := make(Contract)
+func AnyToContract(el any) map[string]any {
+	contract := make(map[string]any)
+
+	if el == nil {
+		return contract
+	}
+
+	if castContract, ok := el.(map[string]any); ok {
+		return castContract
+	}
 
 	for propertyName, contractProperty := range el.(map[any]any) {
 		contract[propertyName.(string)] = contractProperty

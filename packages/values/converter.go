@@ -6,7 +6,7 @@ import (
 	"reflect"
 )
 
-func ValuesToEnv(values Values) []string {
+func ValuesToEnv(values map[string]any) []string {
 	var env []string
 	envMap := convertValuesToEnv(values, "")
 
@@ -20,7 +20,7 @@ func ValuesToEnv(values Values) []string {
 	return env
 }
 
-func convertValuesToEnv(values Values, path string) map[string]string {
+func convertValuesToEnv(values map[string]any, path string) map[string]string {
 	env := make(map[string]string)
 
 	for propertyName, valuesProperty := range values {

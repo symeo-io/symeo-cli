@@ -1,13 +1,13 @@
 package values
 
-func AnyToValues(el any) Values {
-	values := make(Values)
+func AnyToValues(el any) map[string]any {
+	values := make(map[string]any)
 
 	if el == nil {
 		return values
 	}
 
-	if castValues, ok := el.(Values); ok {
+	if castValues, ok := el.(map[string]any); ok {
 		return castValues
 	}
 

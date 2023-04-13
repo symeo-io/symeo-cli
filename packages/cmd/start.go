@@ -28,7 +28,7 @@ var startCmd = &cobra.Command{
 		contractFilePath, _ := cmd.Flags().GetString("contracts-file")
 		apiUrl, _ := cmd.Flags().GetString("api-url")
 
-		var rawValues values.Values
+		var rawValues map[string]any
 
 		if cmd.Flags().Changed("api-key") {
 			apiKey, _ := cmd.Flags().GetString("api-key")

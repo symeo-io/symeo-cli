@@ -6,11 +6,11 @@ import (
 	"symeo/cli/packages/contracts"
 )
 
-func CheckContractCompatibility(contract contracts.Contract, values Values) []string {
+func CheckContractCompatibility(contract map[string]any, values map[string]any) []string {
 	return executeCompatibilityCheck(contract, values, "")
 }
 
-func executeCompatibilityCheck(contract contracts.Contract, values Values, parentPath string) []string {
+func executeCompatibilityCheck(contract map[string]any, values map[string]any, parentPath string) []string {
 	var errors []string
 
 	for propertyName, contractProperty := range contract {
@@ -40,7 +40,7 @@ func executeCompatibilityCheck(contract contracts.Contract, values Values, paren
 	return errors
 }
 
-func contractPropertyAndValueHaveSameType(contractProperty contracts.Contract, value any) bool {
+func contractPropertyAndValueHaveSameType(contractProperty map[string]any, value any) bool {
 	propertyType := contractProperty["type"]
 
 	switch propertyType {
@@ -63,7 +63,7 @@ func buildMissingPropertyError(propertyName string, parentPath string) string {
 	return fmt.Sprintf("The property \"%s\" of your configuration contract is missing in your configuration values.", displayedPropertyName)
 }
 
-func buildWrongTypeError(propertyName string, parentPath string, contractProperty contracts.Contract, value any) string {
+func buildWrongTypeError(propertyName string, parentPath string, contractProperty map[string]any, value any) string {
 	displayedPropertyName := buildParentPath(propertyName, parentPath)
 
 	return fmt.Sprintf("Configuration property \"%s\" has type \"%s\" while configuration contract defined \"%s\" as \"%s\".", displayedPropertyName, displayValueType(value), displayedPropertyName, contractProperty["type"])
