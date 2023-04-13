@@ -8,8 +8,8 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "symeo",
-	Short: "Symeo is bla bla bla",
-	Long:  `Symeo is bla bla bla`,
+	Short: "Symeo CLI is used to inject configuration values as environment variables into any process",
+	Long:  `Symeo is a simple, end-to-end encrypted service that enables teams to sync and manage their configurations and secrets across their development life cycle`,
 }
 
 func Execute() {
