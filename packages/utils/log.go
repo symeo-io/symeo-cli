@@ -10,6 +10,10 @@ func HandleError(err error, messages ...string) {
 	PrintErrorAndExit(1, err, messages...)
 }
 
+func HandleSuccess(message string) {
+	printCommandSuccess(message)
+}
+
 func PrintErrorAndExit(exitCode int, err error, messages ...string) {
 	printError(err)
 
@@ -41,4 +45,8 @@ func HandleValidationErrors(errors ...string) {
 
 func printValidationError(message string) {
 	color.New(color.FgRed).Fprintln(os.Stderr, message)
+}
+
+func printCommandSuccess(message string) {
+	color.New(color.FgGreen).Fprintln(os.Stderr, message)
 }
