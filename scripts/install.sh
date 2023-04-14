@@ -50,12 +50,9 @@ fi
 # example: v0.0.98
 LATEST_RELEASE_VERSION=$(curl -s "https://api.github.com/repos/symeo-io/symeo-cli/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 
-# example: 0.0.98
-NUMERIC_RELEASE_VERSION="${LATEST_RELEASE_VERSION:1}"
-
 DOWNLOAD_LINK="https://github.com/symeo-io/symeo-cli/releases/download/${LATEST_RELEASE_VERSION}/symeo-cli_${PLATFORM}_${ARCH}.tar.gz"
 
-CHECK_IF_BINARY_EXISTS=$(curl -s -o -L /dev/null -w "%{http_code}" ${DOWNLOAD_LINK})
+CHECK_IF_BINARY_EXISTS=$(curl -s -o -L /dev/null -w "%{http_code}" "${DOWNLOAD_LINK}")
 if [[ $CHECK_IF_BINARY_EXISTS == "000Not Found404" ]]; then
   echo "Looks like we do not yet have a binary for this architecture and platform."
   echo "Your architecture is $(uname -m) and your platform is $(uname -s)"
@@ -75,7 +72,7 @@ curl -L -o symeo-binary.tar.gz ${DOWNLOAD_LINK}
 # open up the tar file
 tar zxf symeo-binary.tar.gz
 
-if [ "$PLATFORM" == "darwin" ] || [ $RUNNING_IN_DOCKER ] ; then
+if [ "$PLATFORM" == "darwin" ] || [ $IS_RUNNING_IN_DOCKER ] ; then
   if [[ -d /usr/local/bin ]]; then
     mv symeo-cli /usr/local/bin/
     echo "Symeo CLI ${LATEST_RELEASE_VERSION} has been installed in /usr/local/bin."
