@@ -37,7 +37,7 @@ jobs:
           event: fail
           template: basic_fail_1
   publish:
-    working_directory: ~/symeo-js
+    working_directory: ~/symeo-cli
     docker:
       - image: cimg/go:1.20.3
     steps:
@@ -45,14 +45,8 @@ jobs:
       - restore_cache:
           key: go-mod-v4-{{ checksum "~/symeo-cli/go.sum" }}
       - run:
-          name: Install goreleaser
+          name: Release
           command: curl -sfL https://goreleaser.com/static/run | bash
-      - run:
-          name: Export github token
-          command: GITHUB_TOKEN="${GITHUB_PACKAGES_TOKEN}"
-      - run:
-          name: Publish
-          command: goreleaser release
       - slack/notify:
           event: fail
           template: basic_fail_1
@@ -69,12 +63,11 @@ workflows:
           context:
             - slack-notifications
       - publish:
-          requires:
-            - test
           context:
             - slack-notifications
             - github-packages
           filters:
             branches:
-              only:
-                - main
+              ignore: /.*/
+            tags:
+              only: /^v[0-9].[0-9].[0-9]$/
