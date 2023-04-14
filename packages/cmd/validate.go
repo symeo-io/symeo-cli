@@ -10,7 +10,7 @@ import (
 
 var validateCmd = &cobra.Command{
 	Use:   "validate [any symeo run command flags]",
-	Short: "Used to inject environments variables into your application process",
+	Short: "Used to inject validate environment values against contract",
 	Run: func(cmd *cobra.Command, args []string) {
 		contractFilePath, _ := cmd.Flags().GetString("contracts-file")
 		apiUrl, _ := cmd.Flags().GetString("api-url")
