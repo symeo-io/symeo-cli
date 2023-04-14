@@ -24,13 +24,7 @@ esac
 
 # architecture
 if [[ "$(uname -m)" == 'x86_64' || "$(uname -m)" == "amd64" ]]; then
-  ARCH="amd64"
-elif [[ "$(uname -m)" == armv5* ]]; then
-  ARCH="armv5"
-elif [[ "$(uname -m)" == armv6* ]]; then
-  ARCH="armv6"
-elif [[ "$(uname -m)" == armv7* ]]; then
-  ARCH="armv7"
+  ARCH="x86_64"
 elif [[ "$(uname -m)" == 'arm64' || "$(uname -m)" == 'aarch64' ]]; then
   ARCH="arm64"
 elif [[ "$(uname -m)" == "i386" || "$(uname -m)" == "i686" ]]; then
