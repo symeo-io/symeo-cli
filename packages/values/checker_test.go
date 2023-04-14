@@ -30,12 +30,19 @@ var contract = map[string]any{
 			"type": "boolean",
 		},
 	},
+	"currentUser": map[string]any{
+		"email": map[string]any{
+			"type":  "string",
+			"regex": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+).([a-zA-Z]{2,5})$",
+		},
+	},
 }
 
 func TestCheckContractCompatibilityForMissingProperty(t *testing.T) {
 	host := faker.URL()
 	responseLimit := 100
 	paginationLength := 100
+	email := faker.Email()
 	values := map[string]any{
 		"badName": map[string]any{
 			"host":          host,
@@ -46,6 +53,9 @@ func TestCheckContractCompatibilityForMissingProperty(t *testing.T) {
 		},
 		"auth0": map[string]any{
 			"isAdmin": true,
+		},
+		"currentUser": map[string]any{
+			"email": email,
 		},
 	}
 
@@ -59,6 +69,7 @@ func TestCheckContractCompatibilityForMissingNonOptionalValue(t *testing.T) {
 	host := faker.URL()
 	password := faker.Password()
 	paginationLength := 100
+	email := faker.Email()
 	values := map[string]any{
 		"database": map[string]any{
 			"host":     host,
@@ -69,6 +80,9 @@ func TestCheckContractCompatibilityForMissingNonOptionalValue(t *testing.T) {
 		},
 		"auth0": map[string]any{
 			"isAdmin": true,
+		},
+		"currentUser": map[string]any{
+			"email": email,
 		},
 	}
 
@@ -83,6 +97,7 @@ func TestCheckContractCompatibilityForDifferentTypeFromContract(t *testing.T) {
 	password := faker.Password()
 	responseLimit := "wrongType"
 	paginationLength := 100
+	email := faker.Email()
 	values := map[string]any{
 		"database": map[string]any{
 			"host":          host,
@@ -94,6 +109,9 @@ func TestCheckContractCompatibilityForDifferentTypeFromContract(t *testing.T) {
 		},
 		"auth0": map[string]any{
 			"isAdmin": true,
+		},
+		"currentUser": map[string]any{
+			"email": email,
 		},
 	}
 
@@ -103,11 +121,39 @@ func TestCheckContractCompatibilityForDifferentTypeFromContract(t *testing.T) {
 	assert.Contains(t, errors, "The property \"database.responseLimit\" has type \"string\" while configuration contract defined \"database.responseLimit\" as \"float\".")
 }
 
+func TestCheckContractCompatibilityForInValidValuesForRegex(t *testing.T) {
+	host := faker.URL()
+	responseLimit := 100
+	paginationLength := 100
+	email := "nonMatchingString"
+	values := map[string]any{
+		"database": map[string]any{
+			"host":          host,
+			"responseLimit": responseLimit,
+		},
+		"vcsProvider": map[string]any{
+			"paginationLength": paginationLength,
+		},
+		"auth0": map[string]any{
+			"isAdmin": true,
+		},
+		"currentUser": map[string]any{
+			"email": email,
+		},
+	}
+
+	errors := CheckContractCompatibility(contract, values)
+
+	assert.Equal(t, 1, len(errors))
+	assert.Contains(t, errors, "The property \"currentUser.email\" with value \"nonMatchingString\" does not match regex \"^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+).([a-zA-Z]{2,5})$\" defined in contract.")
+}
+
 func TestCheckContractCompatibilityForValidValues(t *testing.T) {
 	host := faker.URL()
 	password := faker.Password()
 	responseLimit := 100
 	paginationLength := 100
+	email := faker.Email()
 	values := map[string]any{
 		"database": map[string]any{
 			"host":          host,
@@ -119,6 +165,9 @@ func TestCheckContractCompatibilityForValidValues(t *testing.T) {
 		},
 		"auth0": map[string]any{
 			"isAdmin": true,
+		},
+		"currentUser": map[string]any{
+			"email": email,
 		},
 	}
 
@@ -131,6 +180,7 @@ func TestCheckContractCompatibilityForValidValuesWithoutOptionals(t *testing.T) 
 	host := faker.URL()
 	responseLimit := 100
 	paginationLength := 100
+	email := faker.Email()
 	values := map[string]any{
 		"database": map[string]any{
 			"host":          host,
@@ -141,6 +191,9 @@ func TestCheckContractCompatibilityForValidValuesWithoutOptionals(t *testing.T) 
 		},
 		"auth0": map[string]any{
 			"isAdmin": true,
+		},
+		"currentUser": map[string]any{
+			"email": email,
 		},
 	}
 

@@ -3,6 +3,7 @@ package values
 import (
 	"fmt"
 	"reflect"
+	"regexp"
 	"symeo/cli/packages/contracts"
 )
 
@@ -15,24 +16,30 @@ func executeCompatibilityCheck(contract map[string]any, values map[string]any, p
 
 	for propertyName, contractProperty := range contract {
 		valueProperty := values[propertyName]
+		subContract := contracts.AnyToContract(contractProperty)
 
-		if !contracts.IsContractProperty(contracts.AnyToContract(contractProperty)) && isUndefined(valueProperty) {
+		if !contracts.IsContractProperty(subContract) && isUndefined(valueProperty) {
 			errors = append(errors, buildMissingPropertyError(propertyName, parentPath))
 			continue
 		}
 
-		if !contracts.IsContractProperty(contracts.AnyToContract(contractProperty)) && isDefined(valueProperty) {
-			errors = append(errors, executeCompatibilityCheck(contracts.AnyToContract(contractProperty), AnyToValues(valueProperty), buildParentPath(propertyName, parentPath))...)
+		if !contracts.IsContractProperty(subContract) && isDefined(valueProperty) {
+			errors = append(errors, executeCompatibilityCheck(subContract, AnyToValues(valueProperty), buildParentPath(propertyName, parentPath))...)
 			continue
 		}
 
-		if isUndefined(valueProperty) && !contracts.IsContractPropertyOptional(contracts.AnyToContract(contractProperty)) {
+		if isUndefined(valueProperty) && !contracts.IsContractPropertyOptional(subContract) {
 			errors = append(errors, buildMissingPropertyError(propertyName, parentPath))
 			continue
 		}
 
-		if isDefined(valueProperty) && !contractPropertyAndValueHaveSameType(contracts.AnyToContract(contractProperty), valueProperty) {
-			errors = append(errors, buildWrongTypeError(propertyName, parentPath, contracts.AnyToContract(contractProperty), valueProperty))
+		if isDefined(valueProperty) && !contractPropertyAndValueHaveSameType(subContract, valueProperty) {
+			errors = append(errors, buildWrongTypeError(propertyName, parentPath, subContract, valueProperty))
+			continue
+		}
+
+		if isDefined(valueProperty) && contracts.HasContractPropertyRegex(subContract) && !valueMatchContractRegex(subContract, valueProperty) {
+			errors = append(errors, buildWrongRegexError(propertyName, parentPath, subContract, valueProperty))
 			continue
 		}
 	}
@@ -57,6 +64,20 @@ func contractPropertyAndValueHaveSameType(contractProperty map[string]any, value
 	return false
 }
 
+func valueMatchContractRegex(contractProperty map[string]any, value any) bool {
+	if contractProperty["regex"] == nil {
+		return true
+	}
+
+	match, err := regexp.MatchString(contractProperty["regex"].(string), value.(string))
+
+	if err != nil {
+		return false
+	}
+
+	return match
+}
+
 func buildMissingPropertyError(propertyName string, parentPath string) string {
 	displayedPropertyName := buildParentPath(propertyName, parentPath)
 
@@ -67,6 +88,12 @@ func buildWrongTypeError(propertyName string, parentPath string, contractPropert
 	displayedPropertyName := buildParentPath(propertyName, parentPath)
 
 	return fmt.Sprintf("The property \"%s\" has type \"%s\" while configuration contract defined \"%s\" as \"%s\".", displayedPropertyName, displayValueType(value), displayedPropertyName, contractProperty["type"])
+}
+
+func buildWrongRegexError(propertyName string, parentPath string, contractProperty map[string]any, value any) string {
+	displayedPropertyName := buildParentPath(propertyName, parentPath)
+
+	return fmt.Sprintf("The property \"%s\" with value \"%s\" does not match regex \"%s\" defined in contract.", displayedPropertyName, value, contractProperty["regex"])
 }
 
 func buildParentPath(propertyName string, parentPath string) string {

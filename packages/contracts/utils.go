@@ -12,6 +12,10 @@ func IsContractPropertyOptional(el map[string]any) bool {
 	return el["optional"] != nil && el["optional"] == true
 }
 
+func HasContractPropertyRegex(el map[string]any) bool {
+	return el["regex"] != nil && el["regex"] != ""
+}
+
 func AnyToContract(el any) map[string]any {
 	contract := make(map[string]any)
 
