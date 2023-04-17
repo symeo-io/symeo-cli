@@ -7,7 +7,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "symeo",
+	Use:   "symeo-cli",
 	Short: "Symeo CLI is used to inject configuration values as environment variables into any process",
 	Long:  `Symeo is a simple, end-to-end encrypted service that enables teams to sync and manage their configurations and secrets across their development life cycle`,
 }
