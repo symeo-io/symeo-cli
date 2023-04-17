@@ -67,6 +67,21 @@ database:
 - Properties can be flagged with `optional: true`, or `secret: true`
 - For type `string`, you can add a regex expression that the value will have to match
 
+If you prefer, you can also directly list environment variable-like variables:
+
+```yaml
+DATABASE_HOST:
+  type: string
+DATABASE_PORT:
+  type: integer
+DATABASE_USERNAME:
+  type: string
+DATABASE_PASSWORD:
+  type: string
+  secret: true
+  regex: ^[a-zA-Z0-9]+$
+```
+
 ### Create your local configuration file
 
 Create a `symeo.local.yml` file in the root of your project, defining the values matching your configuration contract.
